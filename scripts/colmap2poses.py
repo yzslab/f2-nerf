@@ -132,7 +132,7 @@ class Dataset:
         points3D = scene_manager.points3D
         points3D_ids = scene_manager.point3D_ids
         point3D_id_to_images = scene_manager.point3D_id_to_images
-        image_id_to_image_idx = np.zeros(self.n_images + 10, dtype=np.int32)
+        image_id_to_image_idx = np.zeros(max(scene_manager.name_to_image_id.values()) + 1, dtype=np.int32)
         for image_name in self.names:
             image_id_to_image_idx[name_to_ids[image_name]] = sorted_image_names.index(image_name)
 
