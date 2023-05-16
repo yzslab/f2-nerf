@@ -1,6 +1,7 @@
 import os
 import click
 import numpy as np
+from pathlib import Path
 from shutil import copyfile
 from omegaconf import OmegaConf, DictConfig
 from glob import glob
@@ -20,19 +21,19 @@ def make_image_list(data_path, factor):
     suffix = ['*.jpg', '*.png', '*.JPG', '*.jpeg']
     if 0.999 < factor < 1.001:
         for suf in suffix:
-            image_list += glob(os.path.join(data_path, 'images', suf)) +\
-                          glob(os.path.join(data_path, 'images_1', suf))
+            image_list += list(Path(os.path.join(data_path, 'images')).rglob(suf)) +\
+                          list(Path(os.path.join(data_path, 'images_1')).rglob(suf))
     else:
         f_int = int(np.round(factor))
         for suf in suffix:
-            image_list += glob(os.path.join(data_path, 'images_{}'.format(f_int), suf))
+            image_list += list(Path(os.path.join(data_path, 'images_{}'.format(f_int))).rglob(suf))
 
     assert len(image_list) > 0, "No image found"
     image_list.sort()
 
     f = open(os.path.join(data_path, 'image_list.txt'), 'w')
     for image_path in image_list:
-        f.write(image_path + '\n')
+        f.write(str(image_path) + '\n')
 
 
 @hydra.main(version_base=None, config_path='../confs', config_name='default')
