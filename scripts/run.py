@@ -19,14 +19,27 @@ backup_file_patterns = [
 def make_image_list(data_path, factor):
     image_list = []
     suffix = ['*.jpg', '*.png', '*.JPG', '*.jpeg']
+
+    # build image directory path
     if 0.999 < factor < 1.001:
-        for suf in suffix:
-            image_list += list(Path(os.path.join(data_path, 'images')).rglob(suf)) +\
-                          list(Path(os.path.join(data_path, 'images_1')).rglob(suf))
+        image_dir_name = "images"
+        if os.path.isdir(os.path.join(data_path, image_dir_name)) is False:
+            image_dir_name = "images_1"
     else:
         f_int = int(np.round(factor))
+        image_dir_name = 'images_{}'.format(f_int)
+    image_dir_path = os.path.join(data_path, image_dir_name)
+
+    # build image list
+    registered_image_list = os.path.join(data_path, 'registered_image_list.npy')
+    if os.path.exists(registered_image_list):
+        print("load image list from {}".format(registered_image_list))
+        registered_image_list = np.load(registered_image_list, allow_pickle=True).tolist()
+        for i in registered_image_list:
+            image_list.append(os.path.join(image_dir_path, i))
+    else:
         for suf in suffix:
-            image_list += list(Path(os.path.join(data_path, 'images_{}'.format(f_int))).rglob(suf))
+            image_list += list(Path(image_dir_path).rglob(suf))
 
     assert len(image_list) > 0, "No image found"
     image_list.sort()

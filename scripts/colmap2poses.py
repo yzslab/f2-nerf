@@ -120,6 +120,7 @@ class Dataset:
 
         # re-permute images by name
         sorted_image_names = sorted(deepcopy(self.names))
+        self.sorted_image_names = sorted_image_names
         sort_img_idx = []
         for i in range(self.n_images):
             sort_img_idx.append(self.names.index(sorted_image_names[i]))
@@ -183,6 +184,7 @@ class Dataset:
                                    self.dist_params.reshape([n, -1]),
                                    self.bounds.reshape([n, -1])], axis=-1)
             data = np.ascontiguousarray(np.array(data).astype(np.float64))
+            np.save(pjoin(data_dir, 'registered_image_list.npy'), self.sorted_image_names)
             np.save(pjoin(data_dir, 'cams_meta.npy'), data)
         elif 'poses_bounds' in out_mode :
             poses = deepcopy(self.poses)
